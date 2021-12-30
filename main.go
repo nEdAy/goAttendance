@@ -39,7 +39,7 @@ func main() {
 	// wechat
 	wechat := router.Group("/wechat")
 	wechat.GET("/userPhoneNumber", func(c *gin.Context) {
-		code := c.Param("code")
+		code := c.Query("code")
 		client := resty.New()
 		client.SetDebug(true)
 		resp, err := client.R().
