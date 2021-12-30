@@ -30,7 +30,6 @@ type PhoneNumberResponse struct {
 
 func main() {
 	router := gin.Default()
-	router.SetTrustedProxies([]string{"127.0.0.1"})
 	router.Use(gin.Logger())
 	router.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
@@ -86,5 +85,5 @@ func main() {
 			c.JSON(http.StatusOK, gin.H{"error": err})
 		}
 	})
-	router.RunTLS(":9443", "./tls/6881449_sunac.neday.cn.pem", "./tls/6881449_sunac.neday.cn.key")
+	router.RunTLS(":8443", "./tls/6881449_sunac.neday.cn.pem", "./tls/6881449_sunac.neday.cn.key")
 }
