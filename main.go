@@ -72,7 +72,9 @@ func main() {
 			"target": '国庆节'     // 只在调休下有该字段。表示调休的节假日
 		}
 	}*/
-	router.GET("/isWorkingDay/:day", func(c *gin.Context) {
+	// attendance
+	attendance := router.Group("/attendance")
+	attendance.GET("/isWorkingDay/:day", func(c *gin.Context) {
 		day := c.Param("day")
 		client := resty.New()
 		resp, err := client.R().
