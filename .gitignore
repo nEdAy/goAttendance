@@ -16,5 +16,7 @@ build/
 
 go.sum
 
-config/
 tls/
+
+/app.properties
+/*.json

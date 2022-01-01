@@ -2,10 +2,10 @@ package main
 
 import (
 	"fmt"
+	"github.com/apolloconfig/agollo/v4"
 	"github.com/gin-gonic/gin"
 	"github.com/go-resty/resty/v2"
 	"net/http"
-	"sunacAttendance/config"
 )
 
 type DayInfo struct {
@@ -45,7 +45,22 @@ type PhoneNumberResponse struct {
 	} `json:"phone_info"`
 }
 
+var appid, secret string
+
+func initApolloClient() {
+	client, err := agollo.Start()
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("初始化Apollo配置成功")
+	appid = client.GetStringValue("wechat-appid", "")
+	fmt.Println(appid)
+	secret = client.GetStringValue("wechat-secret", "")
+	fmt.Println(secret)
+}
+
 func main() {
+	initApolloClient()
 	router := gin.Default()
 	router.Use(gin.Logger())
 	router.GET("/ping", func(c *gin.Context) {
@@ -100,9 +115,9 @@ func main() {
 		client := resty.New()
 		resp, err := client.R().
 			SetQueryParams(map[string]string{
-				"appid":      "wxa1afc52994e69d4c",   // 小程序 appId
-				"secret":     config.WechatSecretKey, // 小程序 appSecret
-				"grant_type": "client_credential",    // 授权类型，此处只需填写 client_credential
+				"appid":      appid,               // 小程序 appId
+				"secret":     secret,              // 小程序 appSecret
+				"grant_type": "client_credential", // 授权类型，此处只需填写 client_credential
 			}).
 			SetResult(&WechatToken{}).
 			SetHeader("Accept", "application/json").
