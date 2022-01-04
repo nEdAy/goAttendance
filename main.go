@@ -5,6 +5,8 @@ import (
 	"github.com/apolloconfig/agollo/v4"
 	"github.com/gin-gonic/gin"
 	"github.com/go-resty/resty/v2"
+	"github.com/robfig/cron/v3"
+	"github.com/sirupsen/logrus"
 	"net/http"
 )
 
@@ -50,17 +52,28 @@ var appid, secret string
 func initApolloClient() {
 	client, err := agollo.Start()
 	if err != nil {
-		fmt.Println(err)
+		logrus.Error(err)
+	} else {
+		appid = client.GetStringValue("wechat-appid", "")
+		secret = client.GetStringValue("wechat-secret", "")
+		logrus.WithFields(logrus.Fields{
+			"wechat-appid":  appid,
+			"wechat-secret": secret,
+		}).Debug("初始化Apollo配置成功")
 	}
-	fmt.Println("初始化Apollo配置成功")
-	appid = client.GetStringValue("wechat-appid", "")
-	fmt.Println(appid)
-	secret = client.GetStringValue("wechat-secret", "")
-	fmt.Println(secret)
+}
+
+func initCron() {
+	c := cron.New()
+	c.AddFunc("@every 1s", func() {
+		fmt.Println("tick every 1 second")
+	})
+	c.Start()
 }
 
 func main() {
 	initApolloClient()
+	initCron()
 	router := gin.Default()
 	router.Use(gin.Logger())
 	router.GET("/ping", func(c *gin.Context) {
